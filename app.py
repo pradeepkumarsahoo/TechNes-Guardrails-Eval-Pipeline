@@ -1,4 +1,9 @@
-"""TechNest RAG Evaluation Pipeline — streamlit run app.py"""
+"""TechNest RAG Evaluation Pipeline.
+
+Run with:
+    streamlit run app.py
+"""
+
 import streamlit as st
 
 from ui.state import init_session_state
@@ -8,33 +13,41 @@ from ui.tabs.goldens import render_goldens_tab
 from ui.tabs.pipeline import render_pipeline_tab
 from ui.tabs.results import render_results_tab
 
-st.set_page_config(
-    page_title="TechNest RAG Evaluator",
-    page_icon="🛒",
-    layout="wide",
-)
 
-st.title("🛒 TechNest — RAG Evaluation Pipeline")
-st.caption(
-    "Build a small RAG system over a product catalog, then evaluate it "
-    "with **RAGAS 0.4.3** across 5 metrics."
-)
+def main() -> None:
+    """Initialize the application and render its tabs."""
 
-init_session_state()
-render_sidebar()
+    st.set_page_config(
+        page_title="TechNest RAG Evaluator",
+        page_icon="🛒",
+        layout="wide",
+    )
 
-tab_catalog, tab_goldens, tab_pipeline, tab_results = st.tabs(
-    ["📚 Catalog", "🎯 Goldens", "🚀 Run Evaluation", "📊 Results"]
-)
+    st.title("🛒 TechNest — RAG Evaluation & Monitoring")
 
-with tab_catalog:
-    render_catalog_tab()
+    st.caption(
+        "Build a RAG system over a product catalog and evaluate it "
+        "using RAGAS 0.4.3 across five metrics."
+    )
 
-with tab_goldens:
-    render_goldens_tab()
+    init_session_state()
+    render_sidebar()
 
-with tab_pipeline:
-    render_pipeline_tab()
+    tabs = st.tabs(
+        ["📚 Catalog", "🎯 Goldens", "🚀 Run Evaluation", "📊 Results"]
+    )
 
-with tab_results:
-    render_results_tab()
+    renderers = (
+        render_catalog_tab,
+        render_goldens_tab,
+        render_pipeline_tab,
+        render_results_tab,
+    )
+
+    for tab, render in zip(tabs, renderers):
+        with tab:
+            render()
+
+
+if __name__ == "__main__":
+    main()
